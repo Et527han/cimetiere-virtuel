@@ -1,61 +1,18 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bienvenue au Cimetière</title>
   <!-- Typo rétro -->
-  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-  <!-- Ton fichier CSS -->
-  <link rel="stylesheet" href="style.css">
-
-  <style>
-    body {
-      margin: 0;
-      background: #0d0d0d;
-      font-family: monospace;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-image: url('background.png');
-      background-size: cover;
-      background-position: center;
-    }
-    .login-box {
-      background: rgba(0,0,0,0.75);
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #000;
-      width: 300px;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin: 5px 0;
-      font-family: monospace;
-    }
-    button {
-      background: #444;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #666;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="login-box">
-    <h1>Entre dans le cimetière</h1>
-    <input type="text" id="username" placeholder="Pseudo">
-    <input type="password" id="password" placeholder="Mot de passe">
+    <h1>⚰️ Entre dans le cimetière</h1>
+    <input type="text" id="username" placeholder="Pseudo" />
+    <input type="password" id="password" placeholder="Mot de passe" />
     <button onclick="login()">Se connecter</button>
     <button onclick="signup()">Créer un compte</button>
   </div>
@@ -66,11 +23,7 @@
     async function login() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
-
-      if (!username || !password) {
-        alert('Veuillez remplir tous les champs.');
-        return;
-      }
+      if (!username || !password) return alert('Veuillez remplir tous les champs.');
 
       try {
         const res = await fetch(`${API_URL}/login`, {
@@ -94,11 +47,7 @@
     async function signup() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
-
-      if (!username || !password) {
-        alert('Veuillez remplir tous les champs.');
-        return;
-      }
+      if (!username || !password) return alert('Veuillez remplir tous les champs.');
 
       try {
         const res = await fetch(`${API_URL}/signup`, {
