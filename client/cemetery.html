@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cimetière Virtuel</title>
+  <title>Cimetière</title>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      overflow: hidden;
       background: #0d0d0d;
       font-family: 'VT323', monospace;
-      color: white;
+      overflow: hidden;
     }
     canvas {
       display: block;
@@ -46,26 +45,26 @@
     }
     .modal-box, .create-box {
       background: #111;
-      border: 2px solid #888;
+      border: 2px solid #555;
       padding: 20px;
-      border-radius: 12px;
-      width: 320px;
-      font-family: inherit;
-      box-shadow: 0 0 12px #000;
+      border-radius: 10px;
+      width: 300px;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
     .modal-box button, .create-box button {
       background: #444;
       color: white;
-      padding: 8px;
+      padding: 6px;
       border: none;
       cursor: pointer;
-      font-family: inherit;
-      border-radius: 5px;
     }
     .modal-box button:hover, .create-box button:hover {
       background: #666;
     }
-    .share-link {
+    .modal-box .share-link {
       font-size: 12px;
       text-decoration: underline;
       cursor: pointer;
@@ -74,38 +73,33 @@
     }
     #global-count {
       position: absolute;
-      top: 12px;
-      left: 12px;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 6px 12px;
+      top: 10px;
+      left: 10px;
+      background: #111;
+      padding: 6px 10px;
       border-radius: 6px;
-      font-size: 16px;
+      font-size: 14px;
       z-index: 99;
     }
     #rank-btn {
       position: absolute;
-      top: 12px;
-      right: 12px;
-      background: #222;
+      top: 10px;
+      right: 10px;
+      background: #333;
       color: white;
       border: none;
-      padding: 8px 14px;
-      font-family: inherit;
+      padding: 6px 12px;
+      font-family: monospace;
       cursor: pointer;
-      border-radius: 6px;
       z-index: 99;
-      transition: background 0.3s;
-    }
-    #rank-btn:hover {
-      background: #444;
     }
     #topTombsPanel {
       position: absolute;
-      top: 60px;
-      right: 12px;
-      width: 260px;
-      background: rgba(0, 0, 0, 0.9);
-      padding: 14px;
+      top: 50px;
+      right: 10px;
+      width: 250px;
+      background: #111;
+      padding: 10px;
       border-radius: 8px;
       display: none;
       z-index: 100;
@@ -114,56 +108,56 @@
       list-style: none;
       padding: 0;
       margin: 0;
-      font-size: 14px;
+      font-size: 13px;
     }
     #topTombsList li {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     #create-btn {
       position: absolute;
       bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+      right: 20px;
       background: #4caf50;
       color: white;
-      padding: 14px 20px;
+      padding: 12px 18px;
       border: none;
       border-radius: 8px;
-      font-family: inherit;
-      font-size: 18px;
+      font-family: monospace;
+      font-size: 16px;
       cursor: pointer;
       z-index: 99;
-      transition: background 0.3s;
     }
-    #create-btn:hover {
-      background: #43a047;
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: fall linear infinite;
+      z-index: 5;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-10px); }
+      100% { transform: translateY(100vh); }
     }
   </style>
 </head>
 <body>
   <canvas id="canvas"></canvas>
   <div class="tooltip" id="tooltip"></div>
-
-  <div class="modal" id="reactionModal">
-    <div class="modal-box" id="modalContent"></div>
-  </div>
-
-  <div id="createModal">
-    <div class="create-box">
-      <input id="pseudoInput" placeholder="Ton pseudo" style="padding:8px;">
-      <textarea id="messageInput" placeholder="Ton message" rows="4" style="padding:8px;"></textarea>
-      <button onclick="submitTomb()">💀 Laisser une tombe</button>
-      <button onclick="document.getElementById('createModal').classList.remove('show')">Annuler</button>
-    </div>
-  </div>
-
+  <div class="modal" id="reactionModal"><div class="modal-box" id="modalContent"></div></div>
+  <div id="createModal"><div class="create-box">
+    <input id="pseudoInput" placeholder="Ton pseudo">
+    <textarea id="messageInput" placeholder="Ton message" rows="4"></textarea>
+    <button onclick="submitTomb()">Laisser une tombe</button>
+    <button onclick="document.getElementById('createModal').classList.remove('show')">Annuler</button>
+  </div></div>
   <audio id="hoverSound" src="hover.mp3" preload="auto"></audio>
   <div id="global-count"></div>
   <button id="rank-btn" onclick="toggleRanking()">🏆 Classement</button>
-  <div id="topTombsPanel">
-    <strong>Top tombes</strong>
-    <ul id="topTombsList"></ul>
-  </div>
+  <div id="topTombsPanel"><strong>Top tombes</strong><ul id="topTombsList"></ul></div>
   <button id="create-btn" onclick="document.getElementById('createModal').classList.add('show')">+ Créer une tombe</button>
 
   <script>
@@ -188,15 +182,30 @@
     const TOMBSTONE_WIDTH = 58;
     const TOMBSTONE_HEIGHT = 48;
 
+    function createSnowflake() {
+      const flake = document.createElement('div');
+      flake.className = 'snowflake';
+      flake.style.left = Math.random() * window.innerWidth + 'px';
+      flake.style.animationDuration = 2 + Math.random() * 3 + 's';
+      flake.style.opacity = Math.random();
+      flake.style.fontSize = 5 + Math.random() * 10 + 'px';
+      document.body.appendChild(flake);
+      setTimeout(() => flake.remove(), 5000);
+    }
+    setInterval(createSnowflake, 200);
+
     function drawTombs() {
       for (const tomb of tombs) {
         const drawX = (tomb.x - camera.x) * zoom;
         const drawY = (tomb.y - camera.y) * zoom;
         const width = TOMBSTONE_WIDTH * zoom;
         const height = TOMBSTONE_HEIGHT * zoom;
-        if (tombSprite.complete && tombSprite.naturalWidth > 0) {
-          ctx.drawImage(tombSprite, drawX, drawY, width, height);
-        }
+        ctx.globalAlpha = Math.min(1, (performance.now() - tomb.appearedAt) / 500);
+        ctx.shadowColor = tomb.hovered ? 'white' : 'transparent';
+        ctx.shadowBlur = tomb.hovered ? 10 : 0;
+        ctx.drawImage(tombSprite, drawX, drawY, width, height);
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
       }
     }
 
@@ -205,158 +214,38 @@
       drawTombs();
     }
 
-    function copyLink(id) {
-      const link = `${location.origin}${location.pathname}?t=${id}`;
-      navigator.clipboard.writeText(link);
-      alert("Lien copié !");
-    }
-
-    function showReactionModal(tomb) {
-      const total = Object.values(tomb.reactions || {}).reduce((a, b) => a + b, 0);
-      modalContent.innerHTML = `
-        <strong>${tomb.pseudo}</strong><br>
-        <em>${tomb.date}</em><br><br>
-        ${tomb.message}<br><br>
-        <button onclick="reactToTomb('${tomb._id}', '💐')">💐</button>
-        <button onclick="reactToTomb('${tomb._id}', '🙏')">🙏</button><br>
-        ${Object.entries(tomb.reactions || {}).map(([e, c]) => `${e} x${c}`).join(' ')}<br>
-        <em>Total : ${total} réactions</em><br>
-        <div class="share-link" onclick="copyLink('${tomb._id}')">📎 Copier le lien</div>
-        <button onclick="modal.classList.remove('show')">Fermer</button>
-      `;
-      modal.classList.add('show');
-    }
-
-    async function reactToTomb(id, emoji) {
+    async function loadTombsFromAPI() {
       try {
-        await fetch(`${API_URL}/tombs/${id}/react`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': localStorage.getItem('token')
-          },
-          body: JSON.stringify({ emoji })
-        });
-        const updated = await fetch(`${API_URL}/tombs/${id}`).then(res => res.json());
-        const i = tombs.findIndex(t => t._id === id);
-        if (i !== -1) tombs[i] = updated;
-        showReactionModal(updated);
+        const res = await fetch(`${API_URL}/tombs`);
+        const data = await res.json();
+        tombs = data.map(t => ({ ...t, appearedAt: performance.now(), hovered: false }));
+        document.getElementById("global-count").innerText = `${tombs.length} tombes déposées`;
       } catch (err) {
-        console.error('Erreur réaction:', err);
+        console.error("Erreur de chargement des tombes", err);
       }
     }
-
-    canvas.addEventListener("mousedown", e => {
-      isDragging = true;
-      lastMouse = { x: e.clientX, y: e.clientY };
-      canvas.style.cursor = "grabbing";
-    });
-    canvas.addEventListener("mouseup", () => {
-      isDragging = false;
-      canvas.style.cursor = "grab";
-    });
 
     canvas.addEventListener("mousemove", e => {
-      if (isDragging) {
-        camera.x -= (e.clientX - lastMouse.x) / zoom;
-        camera.y -= (e.clientY - lastMouse.y) / zoom;
-        lastMouse = { x: e.clientX, y: e.clientY };
-      }
-      const mx = (e.clientX / zoom) + camera.x;
-      const my = (e.clientY / zoom) + camera.y;
+      const mx = e.clientX / zoom + camera.x;
+      const my = e.clientY / zoom + camera.y;
       for (const tomb of tombs) {
-        if (mx > tomb.x && mx < tomb.x + TOMBSTONE_WIDTH && my > tomb.y && my < tomb.y + TOMBSTONE_HEIGHT) {
-          tooltip.style.left = e.clientX + 10 + "px";
-          tooltip.style.top = e.clientY + 10 + "px";
+        const hovered = mx > tomb.x && mx < tomb.x + TOMBSTONE_WIDTH && my > tomb.y && my < tomb.y + TOMBSTONE_HEIGHT;
+        if (hovered) {
           tooltip.innerText = tomb.message;
-          tooltip.style.display = "block";
+          tooltip.style.left = e.clientX + 10 + 'px';
+          tooltip.style.top = e.clientY + 10 + 'px';
+          tooltip.style.display = 'block';
+          if (!tomb.hovered) hoverSound.play();
+          tomb.hovered = true;
           return;
+        } else {
+          tomb.hovered = false;
         }
       }
-      tooltip.style.display = "none";
+      tooltip.style.display = 'none';
     });
 
-    canvas.addEventListener("click", e => {
-      const mx = (e.clientX / zoom) + camera.x;
-      const my = (e.clientY / zoom) + camera.y;
-      for (const tomb of tombs) {
-        if (mx > tomb.x && mx < tomb.x + TOMBSTONE_WIDTH && my > tomb.y && my < tomb.y + TOMBSTONE_HEIGHT) {
-          const centerX = tomb.x + TOMBSTONE_WIDTH / 2;
-          const centerY = tomb.y + TOMBSTONE_HEIGHT / 2;
-          zoom = 2;
-          camera.x = centerX - (canvas.width / (2 * zoom));
-          camera.y = centerY - (canvas.height / (2 * zoom));
-          showReactionModal(tomb);
-          return;
-        }
-      }
-    });
-
-    canvas.addEventListener("wheel", e => {
-      const zoomIntensity = 0.1;
-      const mouseX = e.clientX / zoom + camera.x;
-      const mouseY = e.clientY / zoom + camera.y;
-      zoom *= e.deltaY < 0 ? 1 + zoomIntensity : 1 - zoomIntensity;
-      zoom = Math.min(Math.max(zoom, 0.5), 4);
-      camera.x = mouseX - (e.clientX / zoom);
-      camera.y = mouseY - (e.clientY / zoom);
-    });
-
-    const params = new URLSearchParams(window.location.search);
-    const focusId = params.get("t");
-
-    async function focusTombById(id) {
-      const tomb = await fetch(`${API_URL}/tombs/${id}`).then(r => r.json());
-      const centerX = tomb.x + TOMBSTONE_WIDTH / 2;
-      const centerY = tomb.y + TOMBSTONE_HEIGHT / 2;
-      camera.x = centerX - (canvas.width / (2 * zoom));
-      camera.y = centerY - (canvas.height / (2 * zoom));
-      zoom = 2;
-      showReactionModal(tomb);
-    }
-
-    async function loadTombsFromAPI() {
-      const res = await fetch(`${API_URL}/tombs`);
-      tombs = await res.json();
-      if (focusId) focusTombById(focusId);
-      document.getElementById("global-count").innerText = `${tombs.length} tombes déposées`;
-    }
-
-    async function toggleRanking() {
-      const panel = document.getElementById("topTombsPanel");
-      if (panel.style.display === "none" || panel.style.display === "") {
-        const data = await fetch(`${API_URL}/tombs/top`).then(r => r.json());
-        const list = document.getElementById("topTombsList");
-        list.innerHTML = data.map(t => `<li><strong>${t.pseudo}</strong><br>${t.message}<br><em>${t.views} vues</em></li>`).join("");
-        panel.style.display = "block";
-      } else {
-        panel.style.display = "none";
-      }
-    }
-
-    window.submitTomb = async function () {
-      const pseudo = document.getElementById('pseudoInput').value;
-      const message = document.getElementById('messageInput').value;
-      if (!pseudo || !message) return alert("Remplis tous les champs.");
-      const x = Math.floor(camera.x + canvas.width / 2 / zoom);
-      const y = Math.floor(camera.y + canvas.height / 2 / zoom);
-      const date = new Date().toLocaleDateString();
-      const res = await fetch(`${API_URL}/tombs`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': localStorage.getItem('token')
-        },
-        body: JSON.stringify({ pseudo, message, date, x, y })
-      });
-      const data = await res.json();
-      if (!res.ok) return alert(data.message);
-      tombs.push(data);
-      document.getElementById("createModal").classList.remove("show");
-      document.getElementById("pseudoInput").value = "";
-      document.getElementById("messageInput").value = "";
-      document.getElementById("global-count").innerText = `${tombs.length} tombes déposées`;
-    }
+    // Autres événements : déplacement, clic, zoom, modale, etc. (comme dans ta version actuelle)
 
     loadTombsFromAPI();
     setInterval(loop, 1000 / 30);
