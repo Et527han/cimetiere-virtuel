@@ -41,6 +41,8 @@
   </div>
   <button id="create-btn" onclick="document.getElementById('createModal').classList.add('show')">+ Créer une tombe</button>
   <script>
+const API_URL = "https://cimetiere-virtuel.onrender.com";
+
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
     const tooltip = document.getElementById("tooltip");
@@ -197,7 +199,7 @@
 
     async function loadTombsFromAPI() {
       try {
-        const res = await fetch("http://localhost:3000/tombs");
+        const res = await fetch("${API_URL}/tombs");
         tombs = await res.json();
         if (focusId) focusTombById(focusId);
         document.getElementById("global-count").innerText = `${tombs.length} tombes déposées`;
@@ -210,7 +212,7 @@
       const panel = document.getElementById("topTombsPanel");
       if (panel.style.display === "none" || panel.style.display === "") {
         try {
-          const res = await fetch("http://localhost:3000/tombs/top");
+          const res = await fetch("${API_URL}/tombs/top");
           const data = await res.json();
           const list = document.getElementById("topTombsList");
           list.innerHTML = data.map(t => `<li><strong>${t.pseudo}</strong><br>${t.message}<br><em>${t.views} vues</em></li>`).join("");
@@ -231,7 +233,7 @@
       const y = Math.floor(camera.y + canvas.height / 2 / zoom);
       const date = new Date().toLocaleDateString();
       try {
-        const res = await fetch("http://localhost:3000/tombs", {
+        const res = await fetch("${API_URL}/tombs", {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
