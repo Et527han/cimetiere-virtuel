@@ -41,8 +41,6 @@
   </div>
   <button id="create-btn" onclick="document.getElementById('createModal').classList.add('show')">+ Créer une tombe</button>
   <script>
-const API_URL = "https://cimetiere-virtuel.onrender.com";
-
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
     const tooltip = document.getElementById("tooltip");
@@ -104,7 +102,7 @@ const API_URL = "https://cimetiere-virtuel.onrender.com";
 
     async function reactToTomb(id, emoji) {
       try {
-        const res = await fetch(`http://localhost:3000/tombs/${id}/react`, {
+        const res = await fetch(`https://backend-d2en.onrender.com/tombs/${id}/react`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -114,7 +112,7 @@ const API_URL = "https://cimetiere-virtuel.onrender.com";
         });
         const result = await res.json();
         if (!res.ok) return alert(result.message || 'Erreur');
-        const updatedRes = await fetch(`http://localhost:3000/tombs/${id}`);
+        const updatedRes = await fetch(`https://backend-d2en.onrender.com/tombs/${id}`);
         const updated = await updatedRes.json();
         const i = tombs.findIndex(t => t._id === id);
         if (i !== -1) tombs[i] = updated;
@@ -184,7 +182,7 @@ const API_URL = "https://cimetiere-virtuel.onrender.com";
 
     async function focusTombById(id) {
       try {
-        const res = await fetch(`http://localhost:3000/tombs/${id}`);
+        const res = await fetch(`https://backend-d2en.onrender.com/tombs/${id}`);
         const tomb = await res.json();
         const centerX = tomb.x + TOMBSTONE_WIDTH / 2;
         const centerY = tomb.y + TOMBSTONE_HEIGHT / 2;
@@ -199,7 +197,7 @@ const API_URL = "https://cimetiere-virtuel.onrender.com";
 
     async function loadTombsFromAPI() {
       try {
-        const res = await fetch("${API_URL}/tombs");
+        const res = await fetch("https://backend-d2en.onrender.com/tombs");
         tombs = await res.json();
         if (focusId) focusTombById(focusId);
         document.getElementById("global-count").innerText = `${tombs.length} tombes déposées`;
@@ -212,7 +210,7 @@ const API_URL = "https://cimetiere-virtuel.onrender.com";
       const panel = document.getElementById("topTombsPanel");
       if (panel.style.display === "none" || panel.style.display === "") {
         try {
-          const res = await fetch("${API_URL}/tombs/top");
+          const res = await fetch("https://backend-d2en.onrender.com/tombs/top");
           const data = await res.json();
           const list = document.getElementById("topTombsList");
           list.innerHTML = data.map(t => `<li><strong>${t.pseudo}</strong><br>${t.message}<br><em>${t.views} vues</em></li>`).join("");
@@ -233,7 +231,7 @@ const API_URL = "https://cimetiere-virtuel.onrender.com";
       const y = Math.floor(camera.y + canvas.height / 2 / zoom);
       const date = new Date().toLocaleDateString();
       try {
-        const res = await fetch("${API_URL}/tombs", {
+        const res = await fetch("https://backend-d2en.onrender.com/tombs", {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
