@@ -3,40 +3,160 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bienvenue au Cimetière</title>
-  <!-- Typo rétro -->
+  <title>Cimetière Virtuel</title>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-  <!-- Ton fichier CSS -->
-  <link rel="stylesheet" href="style.css">
-
   <style>
-    body { margin: 0; overflow: hidden; background: #0d0d0d; font-family: monospace; color: white; }
-    canvas { display: block; cursor: grab; background: url("background.png") no-repeat center center; background-size: cover; }
-    .tooltip { position: absolute; background: rgba(0, 0, 0, 0.85); color: #fff; padding: 6px 10px; border-radius: 5px; font-size: 14px; pointer-events: none; display: none; white-space: pre-line; z-index: 10; }
-    .modal, #createModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center; z-index: 30; }
-    .modal.show, #createModal.show { display: flex !important; }
-    .modal-box, .create-box { background: #111; border: 2px solid #555; padding: 20px; border-radius: 10px; width: 300px; font-family: monospace; display: flex; flex-direction: column; gap: 10px; }
-    .modal-box button, .create-box button { background: #444; color: white; padding: 6px; border: none; cursor: pointer; }
-    .modal-box button:hover, .create-box button:hover { background: #666; }
-    .modal-box .share-link { font-size: 12px; text-decoration: underline; cursor: pointer; color: #88f; margin-top: 5px; }
-    #global-count { position: absolute; top: 10px; left: 10px; background: #111; padding: 6px 10px; border-radius: 6px; font-size: 14px; z-index: 99; }
-    #rank-btn { position: absolute; top: 10px; right: 10px; background: #333; color: white; border: none; padding: 6px 12px; font-family: monospace; cursor: pointer; z-index: 99; }
-    #topTombsPanel { position: absolute; top: 50px; right: 10px; width: 250px; background: #111; padding: 10px; border-radius: 8px; display: none; z-index: 100; }
-    #topTombsList { list-style: none; padding: 0; margin: 0; font-size: 13px; }
-    #topTombsList li { margin-bottom: 8px; }
-    #create-btn { position: absolute; bottom: 20px; right: 20px; background: #4caf50; color: white; padding: 12px 18px; border: none; border-radius: 8px; font-family: monospace; font-size: 16px; cursor: pointer; z-index: 99; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #0d0d0d;
+      font-family: 'VT323', monospace;
+      color: white;
+    }
+    canvas {
+      display: block;
+      cursor: grab;
+      background: url("background.png") no-repeat center center;
+      background-size: cover;
+    }
+    .tooltip {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      pointer-events: none;
+      display: none;
+      white-space: pre-line;
+      z-index: 10;
+    }
+    .modal, #createModal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+    }
+    .modal.show, #createModal.show {
+      display: flex !important;
+    }
+    .modal-box, .create-box {
+      background: #111;
+      border: 2px solid #888;
+      padding: 20px;
+      border-radius: 12px;
+      width: 320px;
+      font-family: inherit;
+      box-shadow: 0 0 12px #000;
+    }
+    .modal-box button, .create-box button {
+      background: #444;
+      color: white;
+      padding: 8px;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      border-radius: 5px;
+    }
+    .modal-box button:hover, .create-box button:hover {
+      background: #666;
+    }
+    .share-link {
+      font-size: 12px;
+      text-decoration: underline;
+      cursor: pointer;
+      color: #88f;
+      margin-top: 5px;
+    }
+    #global-count {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 16px;
+      z-index: 99;
+    }
+    #rank-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #222;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      font-family: inherit;
+      cursor: pointer;
+      border-radius: 6px;
+      z-index: 99;
+      transition: background 0.3s;
+    }
+    #rank-btn:hover {
+      background: #444;
+    }
+    #topTombsPanel {
+      position: absolute;
+      top: 60px;
+      right: 12px;
+      width: 260px;
+      background: rgba(0, 0, 0, 0.9);
+      padding: 14px;
+      border-radius: 8px;
+      display: none;
+      z-index: 100;
+    }
+    #topTombsList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 14px;
+    }
+    #topTombsList li {
+      margin-bottom: 10px;
+    }
+    #create-btn {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4caf50;
+      color: white;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 18px;
+      cursor: pointer;
+      z-index: 99;
+      transition: background 0.3s;
+    }
+    #create-btn:hover {
+      background: #43a047;
+    }
   </style>
 </head>
 <body>
   <canvas id="canvas"></canvas>
   <div class="tooltip" id="tooltip"></div>
-  <div class="modal" id="reactionModal"><div class="modal-box" id="modalContent"></div></div>
-  <div id="createModal"><div class="create-box">
-    <input id="pseudoInput" placeholder="Ton pseudo" style="padding:8px; font-family:monospace;">
-    <textarea id="messageInput" placeholder="Ton message" rows="4" style="padding:8px; font-family:monospace;"></textarea>
-    <button onclick="submitTomb()">Laisser une tombe</button>
-    <button onclick="document.getElementById('createModal').classList.remove('show')">Annuler</button>
-  </div></div>
+
+  <div class="modal" id="reactionModal">
+    <div class="modal-box" id="modalContent"></div>
+  </div>
+
+  <div id="createModal">
+    <div class="create-box">
+      <input id="pseudoInput" placeholder="Ton pseudo" style="padding:8px;">
+      <textarea id="messageInput" placeholder="Ton message" rows="4" style="padding:8px;"></textarea>
+      <button onclick="submitTomb()">💀 Laisser une tombe</button>
+      <button onclick="document.getElementById('createModal').classList.remove('show')">Annuler</button>
+    </div>
+  </div>
+
   <audio id="hoverSound" src="hover.mp3" preload="auto"></audio>
   <div id="global-count"></div>
   <button id="rank-btn" onclick="toggleRanking()">🏆 Classement</button>
@@ -45,7 +165,9 @@
     <ul id="topTombsList"></ul>
   </div>
   <button id="create-btn" onclick="document.getElementById('createModal').classList.add('show')">+ Créer une tombe</button>
+
   <script>
+    const API_URL = 'https://backend-d2en.onrender.com';
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
     const tooltip = document.getElementById("tooltip");
@@ -97,7 +219,7 @@
         ${tomb.message}<br><br>
         <button onclick="reactToTomb('${tomb._id}', '💐')">💐</button>
         <button onclick="reactToTomb('${tomb._id}', '🙏')">🙏</button><br>
-        ${Object.entries(tomb.reactions || {}).map(([e,c]) => `${e} x${c}`).join(' ')}<br>
+        ${Object.entries(tomb.reactions || {}).map(([e, c]) => `${e} x${c}`).join(' ')}<br>
         <em>Total : ${total} réactions</em><br>
         <div class="share-link" onclick="copyLink('${tomb._id}')">📎 Copier le lien</div>
         <button onclick="modal.classList.remove('show')">Fermer</button>
@@ -107,7 +229,7 @@
 
     async function reactToTomb(id, emoji) {
       try {
-        const res = await fetch(`https://backend-d2en.onrender.com/tombs/${id}/react`, {
+        await fetch(`${API_URL}/tombs/${id}/react`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -115,10 +237,7 @@
           },
           body: JSON.stringify({ emoji })
         });
-        const result = await res.json();
-        if (!res.ok) return alert(result.message || 'Erreur');
-        const updatedRes = await fetch(`https://backend-d2en.onrender.com/tombs/${id}`);
-        const updated = await updatedRes.json();
+        const updated = await fetch(`${API_URL}/tombs/${id}`).then(res => res.json());
         const i = tombs.findIndex(t => t._id === id);
         if (i !== -1) tombs[i] = updated;
         showReactionModal(updated);
@@ -132,14 +251,16 @@
       lastMouse = { x: e.clientX, y: e.clientY };
       canvas.style.cursor = "grabbing";
     });
-    canvas.addEventListener("mouseup", () => { isDragging = false; canvas.style.cursor = "grab"; });
+    canvas.addEventListener("mouseup", () => {
+      isDragging = false;
+      canvas.style.cursor = "grab";
+    });
 
     canvas.addEventListener("mousemove", e => {
       if (isDragging) {
         camera.x -= (e.clientX - lastMouse.x) / zoom;
         camera.y -= (e.clientY - lastMouse.y) / zoom;
-        lastMouse.x = e.clientX;
-        lastMouse.y = e.clientY;
+        lastMouse = { x: e.clientX, y: e.clientY };
       }
       const mx = (e.clientX / zoom) + camera.x;
       const my = (e.clientY / zoom) + camera.y;
@@ -175,8 +296,7 @@
       const zoomIntensity = 0.1;
       const mouseX = e.clientX / zoom + camera.x;
       const mouseY = e.clientY / zoom + camera.y;
-      const delta = e.deltaY < 0 ? 1 + zoomIntensity : 1 - zoomIntensity;
-      zoom *= delta;
+      zoom *= e.deltaY < 0 ? 1 + zoomIntensity : 1 - zoomIntensity;
       zoom = Math.min(Math.max(zoom, 0.5), 4);
       camera.x = mouseX - (e.clientX / zoom);
       camera.y = mouseY - (e.clientY / zoom);
@@ -186,43 +306,29 @@
     const focusId = params.get("t");
 
     async function focusTombById(id) {
-      try {
-        const res = await fetch(`https://backend-d2en.onrender.com/tombs/${id}`);
-        const tomb = await res.json();
-        const centerX = tomb.x + TOMBSTONE_WIDTH / 2;
-        const centerY = tomb.y + TOMBSTONE_HEIGHT / 2;
-        camera.x = centerX - (canvas.width / (2 * zoom));
-        camera.y = centerY - (canvas.height / (2 * zoom));
-        zoom = 2;
-        showReactionModal(tomb);
-      } catch (err) {
-        console.warn("Tombe non trouvée", err);
-      }
+      const tomb = await fetch(`${API_URL}/tombs/${id}`).then(r => r.json());
+      const centerX = tomb.x + TOMBSTONE_WIDTH / 2;
+      const centerY = tomb.y + TOMBSTONE_HEIGHT / 2;
+      camera.x = centerX - (canvas.width / (2 * zoom));
+      camera.y = centerY - (canvas.height / (2 * zoom));
+      zoom = 2;
+      showReactionModal(tomb);
     }
 
     async function loadTombsFromAPI() {
-      try {
-        const res = await fetch("https://backend-d2en.onrender.com/tombs");
-        tombs = await res.json();
-        if (focusId) focusTombById(focusId);
-        document.getElementById("global-count").innerText = `${tombs.length} tombes déposées`;
-      } catch (err) {
-        console.error("Erreur de chargement des tombes", err);
-      }
+      const res = await fetch(`${API_URL}/tombs`);
+      tombs = await res.json();
+      if (focusId) focusTombById(focusId);
+      document.getElementById("global-count").innerText = `${tombs.length} tombes déposées`;
     }
 
     async function toggleRanking() {
       const panel = document.getElementById("topTombsPanel");
       if (panel.style.display === "none" || panel.style.display === "") {
-        try {
-          const res = await fetch("https://backend-d2en.onrender.com/tombs/top");
-          const data = await res.json();
-          const list = document.getElementById("topTombsList");
-          list.innerHTML = data.map(t => `<li><strong>${t.pseudo}</strong><br>${t.message}<br><em>${t.views} vues</em></li>`).join("");
-          panel.style.display = "block";
-        } catch (err) {
-          console.error("Erreur classement:", err);
-        }
+        const data = await fetch(`${API_URL}/tombs/top`).then(r => r.json());
+        const list = document.getElementById("topTombsList");
+        list.innerHTML = data.map(t => `<li><strong>${t.pseudo}</strong><br>${t.message}<br><em>${t.views} vues</em></li>`).join("");
+        panel.style.display = "block";
       } else {
         panel.style.display = "none";
       }
@@ -235,25 +341,21 @@
       const x = Math.floor(camera.x + canvas.width / 2 / zoom);
       const y = Math.floor(camera.y + canvas.height / 2 / zoom);
       const date = new Date().toLocaleDateString();
-      try {
-        const res = await fetch("https://backend-d2en.onrender.com/tombs", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': localStorage.getItem('token')
-          },
-          body: JSON.stringify({ pseudo, message, date, x, y })
-        });
-        const data = await res.json();
-        if (!res.ok) return alert(data.message);
-        tombs.push(data);
-        document.getElementById("createModal").classList.remove("show");
-        document.getElementById("pseudoInput").value = "";
-        document.getElementById("messageInput").value = "";
-        document.getElementById("global-count").innerText = `${tombs.length} tombes déposées`;
-      } catch (err) {
-        alert("Erreur serveur");
-      }
+      const res = await fetch(`${API_URL}/tombs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('token')
+        },
+        body: JSON.stringify({ pseudo, message, date, x, y })
+      });
+      const data = await res.json();
+      if (!res.ok) return alert(data.message);
+      tombs.push(data);
+      document.getElementById("createModal").classList.remove("show");
+      document.getElementById("pseudoInput").value = "";
+      document.getElementById("messageInput").value = "";
+      document.getElementById("global-count").innerText = `${tombs.length} tombes déposées`;
     }
 
     loadTombsFromAPI();
