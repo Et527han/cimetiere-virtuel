@@ -1,0 +1,139 @@
+body {
+    margin: 0;
+    background: #0d0d0d;
+    font-family: 'VT323', monospace;
+    color: white;
+    overflow: hidden;
+  }
+  
+  canvas {
+    display: block;
+    cursor: grab;
+    background: url("background.png") no-repeat center center;
+    background-size: cover;
+  }
+  
+  button {
+    background: #444;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s, transform 0.2s;
+  }
+  
+  button:hover {
+    background: #666;
+    transform: scale(1.05);
+  }
+  
+  .tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    pointer-events: none;
+    display: none;
+    white-space: pre-line;
+    z-index: 10;
+  }
+  
+  .modal, #createModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+  }
+  
+  .modal.show, #createModal.show {
+    display: flex !important;
+  }
+  
+  .modal-box, .create-box {
+    background: #111;
+    border: 2px solid #555;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  
+  .modal-box .share-link {
+    font-size: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+    color: #88f;
+    margin-top: 5px;
+  }
+  
+  #global-count, #rank-btn {
+    position: absolute;
+    top: 10px;
+    font-size: 14px;
+    z-index: 99;
+    background: #111;
+    padding: 6px 10px;
+    border-radius: 6px;
+  }
+  
+  #global-count {
+    left: 10px;
+  }
+  
+  #rank-btn {
+    right: 10px;
+  }
+  
+  #topTombsPanel {
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    width: 250px;
+    background: #111;
+    padding: 10px;
+    border-radius: 8px;
+    display: none;
+    z-index: 100;
+  }
+  
+  #topTombsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 13px;
+  }
+  
+  #topTombsList li {
+    margin-bottom: 8px;
+  }
+  
+  #create-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: #4caf50;
+    color: white;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 99;
+  }
+  
