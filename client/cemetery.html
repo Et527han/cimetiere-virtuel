@@ -8,9 +8,10 @@
   <style>
     body {
       margin: 0;
-      background: #0d0d0d;
-      font-family: 'VT323', monospace;
       overflow: hidden;
+      font-family: 'VT323', monospace;
+      background-color: #0d0d0d;
+      color: white;
     }
     canvas {
       display: block;
@@ -32,8 +33,7 @@
     }
     .modal, #createModal {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.7);
       display: none;
       align-items: center;
@@ -75,7 +75,7 @@
       position: absolute;
       top: 10px;
       left: 10px;
-      background: #111;
+      background: rgba(0,0,0,0.7);
       padding: 6px 10px;
       border-radius: 6px;
       font-size: 14px;
@@ -130,17 +130,15 @@
     .snowflake {
       position: fixed;
       top: -10px;
-      width: 8px;
-      height: 8px;
-      background: white;
-      border-radius: 50%;
-      opacity: 0.8;
+      color: white;
+      font-size: 1em;
+      user-select: none;
       animation: fall linear infinite;
-      z-index: 5;
+      z-index: 50;
     }
     @keyframes fall {
-      0% { transform: translateY(-10px); }
-      100% { transform: translateY(100vh); }
+      0% { transform: translateY(-10px); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
     }
   </style>
 </head>
@@ -154,101 +152,25 @@
     <button onclick="submitTomb()">Laisser une tombe</button>
     <button onclick="document.getElementById('createModal').classList.remove('show')">Annuler</button>
   </div></div>
-  <audio id="hoverSound" src="hover.mp3" preload="auto"></audio>
   <div id="global-count"></div>
   <button id="rank-btn" onclick="toggleRanking()">🏆 Classement</button>
-  <div id="topTombsPanel"><strong>Top tombes</strong><ul id="topTombsList"></ul></div>
+  <div id="topTombsPanel">
+    <strong>Top tombes</strong>
+    <ul id="topTombsList"></ul>
+  </div>
   <button id="create-btn" onclick="document.getElementById('createModal').classList.add('show')">+ Créer une tombe</button>
-
   <script>
-    const API_URL = 'https://backend-d2en.onrender.com';
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    const tooltip = document.getElementById("tooltip");
-    const modal = document.getElementById("reactionModal");
-    const modalContent = document.getElementById("modalContent");
-    const hoverSound = document.getElementById("hoverSound");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const tombSprite = new Image();
-    tombSprite.src = "./tomb.png";
-
-    let tombs = [];
-    let camera = { x: 0, y: 0 };
-    let zoom = 1;
-    let isDragging = false;
-    let lastMouse = { x: 0, y: 0 };
-    const TOMBSTONE_WIDTH = 58;
-    const TOMBSTONE_HEIGHT = 48;
-
-    function createSnowflake() {
-      const flake = document.createElement('div');
-      flake.className = 'snowflake';
-      flake.style.left = Math.random() * window.innerWidth + 'px';
-      flake.style.animationDuration = 2 + Math.random() * 3 + 's';
-      flake.style.opacity = Math.random();
-      flake.style.fontSize = 5 + Math.random() * 10 + 'px';
-      document.body.appendChild(flake);
-      setTimeout(() => flake.remove(), 5000);
-    }
-    setInterval(createSnowflake, 200);
-
-    function drawTombs() {
-      for (const tomb of tombs) {
-        const drawX = (tomb.x - camera.x) * zoom;
-        const drawY = (tomb.y - camera.y) * zoom;
-        const width = TOMBSTONE_WIDTH * zoom;
-        const height = TOMBSTONE_HEIGHT * zoom;
-        ctx.globalAlpha = Math.min(1, (performance.now() - tomb.appearedAt) / 500);
-        ctx.shadowColor = tomb.hovered ? 'white' : 'transparent';
-        ctx.shadowBlur = tomb.hovered ? 10 : 0;
-        ctx.drawImage(tombSprite, drawX, drawY, width, height);
-        ctx.globalAlpha = 1;
-        ctx.shadowBlur = 0;
-      }
-    }
-
-    function loop() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawTombs();
-    }
-
-    async function loadTombsFromAPI() {
-      try {
-        const res = await fetch(`${API_URL}/tombs`);
-        const data = await res.json();
-        tombs = data.map(t => ({ ...t, appearedAt: performance.now(), hovered: false }));
-        document.getElementById("global-count").innerText = `${tombs.length} tombes déposées`;
-      } catch (err) {
-        console.error("Erreur de chargement des tombes", err);
-      }
-    }
-
-    canvas.addEventListener("mousemove", e => {
-      const mx = e.clientX / zoom + camera.x;
-      const my = e.clientY / zoom + camera.y;
-      for (const tomb of tombs) {
-        const hovered = mx > tomb.x && mx < tomb.x + TOMBSTONE_WIDTH && my > tomb.y && my < tomb.y + TOMBSTONE_HEIGHT;
-        if (hovered) {
-          tooltip.innerText = tomb.message;
-          tooltip.style.left = e.clientX + 10 + 'px';
-          tooltip.style.top = e.clientY + 10 + 'px';
-          tooltip.style.display = 'block';
-          if (!tomb.hovered) hoverSound.play();
-          tomb.hovered = true;
-          return;
-        } else {
-          tomb.hovered = false;
-        }
-      }
-      tooltip.style.display = 'none';
-    });
-
-    // Autres événements : déplacement, clic, zoom, modale, etc. (comme dans ta version actuelle)
-
-    loadTombsFromAPI();
-    setInterval(loop, 1000 / 30);
+    // GÉNÉRATION DE NEIGE
+    setInterval(() => {
+      const snowflake = document.createElement('div');
+      snowflake.className = 'snowflake';
+      snowflake.textContent = '❄';
+      snowflake.style.left = Math.random() * window.innerWidth + 'px';
+      snowflake.style.animationDuration = (2 + Math.random() * 5) + 's';
+      document.body.appendChild(snowflake);
+      setTimeout(() => snowflake.remove(), 7000);
+    }, 300);
   </script>
+  <script src="main.js"></script>
 </body>
 </html>
