@@ -49,7 +49,8 @@
       border: 2px solid #888;
       padding: 20px;
       border-radius: 12px;
-      width: 320px;
+      width: 90%;
+      max-width: 320px;
       font-family: inherit;
       box-shadow: 0 0 12px #000;
     }
@@ -61,6 +62,8 @@
       cursor: pointer;
       font-family: inherit;
       border-radius: 5px;
+      width: 100%;
+      margin-top: 8px;
     }
     .modal-box button:hover, .create-box button:hover {
       background: #666;
@@ -71,6 +74,7 @@
       cursor: pointer;
       color: #88f;
       margin-top: 5px;
+      display: inline-block;
     }
     #global-count {
       position: absolute;
@@ -103,7 +107,8 @@
       position: absolute;
       top: 60px;
       right: 12px;
-      width: 260px;
+      width: 90%;
+      max-width: 260px;
       background: rgba(0, 0, 0, 0.9);
       padding: 14px;
       border-radius: 8px;
@@ -134,9 +139,28 @@
       cursor: pointer;
       z-index: 99;
       transition: background 0.3s;
+      width: calc(100% - 40px);
+      max-width: 300px;
     }
     #create-btn:hover {
       background: #43a047;
+    }
+    input, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 16px;
+      margin-bottom: 10px;
+      background: #222;
+      color: white;
+      border: 1px solid #555;
+      border-radius: 5px;
+    }
+    @media (max-width: 480px) {
+      #rank-btn, #global-count {
+        font-size: 14px;
+        padding: 6px 10px;
+      }
     }
   </style>
 </head>
